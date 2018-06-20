@@ -6,7 +6,10 @@ import classes from './Modal.css'
 
 class Modal extends Component {
     shouldComponentUpdate (nextProps, nextState) {
-        return nextProps.show !== this.props.show // we do this check to not let OrderSummary be rendered per each change. Just be rendered only when it shows
+        return (nextProps.show !== this.props.show // we do this check to not let OrderSummary be rendered per each change. Just be rendered only when it shows
+        ||
+        nextProps.children !== this.props.children
+        )
     };
 
     render () {
