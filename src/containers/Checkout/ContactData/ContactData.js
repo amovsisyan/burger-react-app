@@ -5,6 +5,7 @@ import axios from '../../../axios-orders';
 import Spinner from '../../../components/UI/Spinner/Spinner'
 import classes from './ContactData.css'
 import Input from '../../../components/UI/Input/Input'
+import * as actions from '../../../store/actions/index'
 
 class ContactData extends Component {
     state = {
@@ -87,19 +88,13 @@ class ContactData extends Component {
                 valid: true,
                 touched: false,
                 shouldValidate: false,
-                value: ''
+                value: 'fastest'
             }
         },
-        isFormValid: false,
-        loading: false
-    }
+        isFormValid: false
+    };
 
     orderHandler = async (event) => {
-        this.setState(
-            {
-                loading: true
-            }
-        );
         event.preventDefault();
         const formData = {};
 
@@ -112,26 +107,8 @@ class ContactData extends Component {
             price: this.props.price,
             orderData: formData
         };
-        try {
-            const response = await axios.post(
-                '/orders.json',
-                order
-            );
-            this.setState(
-                {
-                    loading: false
-                }
-            );
-            this.props.history.push('/');
-        } catch (e) {
-            this.setState(
-                {
-                    loading: false
-                }
-            );
-            console.log('Error', e);
-        }
-    }
+        this.props.onOrderBurger(order);
+    };
 
     checkValidity = (value, rules) => {
         let isValid = true;
@@ -202,7 +179,7 @@ class ContactData extends Component {
                             invalid={!formElement.config.valid}
                             touched={formElement.config.touched}
                             shouldValidate={formElement.config.shouldValidate}
-                    />
+                        />
                     })
                 }
                 <Button
@@ -215,7 +192,7 @@ class ContactData extends Component {
             </form>
         );
 
-        if (this.state.loading) {
+        if (this.props.loading) {
             form = <Spinner/>
         }
 
@@ -228,11 +205,18 @@ class ContactData extends Component {
     }
 }
 
-const mapStateToProps = (state) =>  {
+const mapStateToProps = (state) => {
     return {
-        ings: state.ingredients,
-        price: state.totalPrice
+        ings: state.burgerBuilderReducer.ingredients,
+        price: state.burgerBuilderReducer.totalPrice,
+        loading: state.orderReducer.loading
     }
 };
 
-export default connect(mapStateToProps)(ContactData);
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onOrderBurger: (orderData) => dispatch(actions.purchaseBurger(orderData)),
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContactData);
