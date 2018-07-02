@@ -8,15 +8,22 @@ import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary'
 import axios from '../../axios-orders';
 import Spinner from '../../components/UI/Spinner/Spinner'
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler'
-import * as actions from '../../store/actions/index'
+import * as actions from '../../store/actions/index';
+
+import * as orderActions from '../../store/order/actions';
+import * as orderSelectors from '../../store/order/selectors';
+
+import * as asd from '../../store/order/actions';
+import * as ads from '../../store/order/selectors';
 
 class BurgerBuilder extends Component {
     state = {
         purchasing: false
     };
 
-    componentDidMount () {
+    componentDidMount() {
         this.props.onInitIngredients();
+        this.props.onInitOrder();
     }
 
     updatePurchaseState = () => {
@@ -55,6 +62,7 @@ class BurgerBuilder extends Component {
     };
 
     render() {
+        console.log(this.props);
         const disableInfo = {
             ...this.props.ings
         };
@@ -103,11 +111,12 @@ class BurgerBuilder extends Component {
     }
 }
 
-const mapStateToProps = (state) =>  {
+const mapStateToProps = (state) => {
     return {
         ings: state.burgerBuilderReducer.ingredients,
         price: state.burgerBuilderReducer.totalPrice,
-        error: state.burgerBuilderReducer.error
+        error: state.burgerBuilderReducer.error,
+        init: orderSelectors.getInitOrder(state)
     }
 };
 
@@ -116,7 +125,8 @@ const mapDispatchToProps = (dispatch) => {
         onIngredientAdded: (ingrName) => dispatch(actions.addIngredient(ingrName)),
         onIngredientRemoved: (ingrName) => dispatch(actions.removeIngredient(ingrName)),
         onInitIngredients: () => dispatch(actions.initIngredients()),
-        onInitPurchase: () => dispatch(actions.purchaseInit())
+        onInitPurchase: () => dispatch(actions.purchaseInit()),
+        onInitOrder: () => dispatch(orderActions.initOrders())
     }
 };
 
